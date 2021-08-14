@@ -1,0 +1,21 @@
+@import url('~normalize.css');
+@import './fonts.css';
+
+body {
+  font-family: 'NotoSans';
+}
+
+.container {
+  font-size: 30px;
+  max-width: 500px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.logo {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  background-image: url('../assets/webpack-logo.png');
+  background-size: cover;
+}

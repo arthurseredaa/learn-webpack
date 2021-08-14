@@ -5,6 +5,8 @@ import json from '@/assets/json';
 import xml from '@/assets/data.xml';
 import csv from '@/assets/data.csv';
 import '@/styles/index.css';
+import '@/styles/less.less';
+import '@/styles/sass.scss';
 
 const post = new Post('webpack post title').toString();
 

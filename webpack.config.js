@@ -4,10 +4,31 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { HotModuleReplacementPlugin } = require('webpack');
+const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+// TODO: fix hot module replacement, it doesn't work
 
 const devMode = process.env.NODE_ENV === 'development';
+
+const fileName = (ext) =>
+  devMode ? `[name].${ext}` : `[name].[contenthash].${ext}`;
+
+const cssLoader = (loader) => {
+  const config = [
+    {
+      loader: MiniCssExtractPlugin.loader,
+      options: {},
+    },
+    'css-loader',
+  ];
+
+  if (loader) {
+    config.push(loader);
+  }
+
+  return config;
+};
 
 const plugins = [
   new HtmlWebpackPlugin({
@@ -29,14 +50,12 @@ const plugins = [
   }),
   // Minify css
   new MiniCssExtractPlugin({
-    filename: '[name].[contenthash].css',
+    filename: fileName('css'),
+  }),
+  new webpack.HotModuleReplacementPlugin({
+    accept: true,
   }),
 ];
-
-// Include hot module replacement in development modes
-if (devMode) {
-  plugins.push(new HotModuleReplacementPlugin());
-}
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
@@ -45,7 +64,7 @@ module.exports = {
     analytics: './analytics.js',
   },
   output: {
-    filename: '[name].[contenthash].js',
+    filename: fileName('js'),
     path: path.resolve(__dirname, 'dist'),
   },
   devServer: {
@@ -72,13 +91,15 @@ module.exports = {
       // STYLES
       {
         test: /\.css$/i,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {},
-          },
-          'css-loader',
-        ],
+        use: cssLoader(),
+      },
+      {
+        test: /\.less$/i,
+        use: cssLoader('less-loader'),
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: cssLoader('sass-loader'),
       },
       // IMAGES
       {
@@ -101,5 +122,8 @@ module.exports = {
         use: ['csv-loader'],
       },
     ],
+  },
+  watchOptions: {
+    aggregateTimeout: 100,
   },
 };

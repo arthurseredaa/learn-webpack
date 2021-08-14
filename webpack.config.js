@@ -1,12 +1,48 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { HotModuleReplacementPlugin } = require('webpack');
+const TerserPlugin = require('terser-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+
+const devMode = process.env.NODE_ENV === 'development';
+
+const plugins = [
+  new HtmlWebpackPlugin({
+    template: './index.html',
+    minify: {
+      collapseWhitespace: !devMode,
+    },
+  }),
+  // Clean dist folder after each build, delete only modified files
+  new CleanWebpackPlugin(),
+  // Copy favicon to dist folder
+  new CopyWebpackPlugin({
+    patterns: [
+      {
+        from: path.resolve(__dirname, 'src/favicon.ico'),
+        to: path.resolve(__dirname, 'dist'),
+      },
+    ],
+  }),
+  // Minify css
+  new MiniCssExtractPlugin({
+    filename: '[name].[contenthash].css',
+  }),
+];
+
+// Include hot module replacement in development modes
+if (devMode) {
+  plugins.push(new HotModuleReplacementPlugin());
+}
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
   entry: {
     main: './index.js',
-    analytics: './analytics.js'
+    analytics: './analytics.js',
   },
   output: {
     filename: '[name].[contenthash].js',
@@ -15,31 +51,34 @@ module.exports = {
   devServer: {
     port: 9000,
     open: true,
+    hot: devMode,
   },
   resolve: {
     extensions: ['.js', '.json'],
     alias: {
       '@models': path.resolve(__dirname, 'src/models'),
-      '@': path.resolve(__dirname, 'src')
-    }
+      '@': path.resolve(__dirname, 'src'),
+    },
   },
   optimization: {
+    minimizer: [new TerserPlugin(), new CssMinimizerPlugin()],
     splitChunks: {
-      chunks: 'all'
-    }
+      chunks: 'all',
+    },
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: './index.html',
-    }),
-    new CleanWebpackPlugin(),
-  ],
+  plugins,
   module: {
     rules: [
       // STYLES
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {},
+          },
+          'css-loader',
+        ],
       },
       // IMAGES
       {
@@ -54,13 +93,13 @@ module.exports = {
       // XML
       {
         test: /\.xml$/,
-        use: ['xml-loader']
+        use: ['xml-loader'],
       },
       // CSV
       {
         test: /\.csv$/,
-        use: ['csv-loader']
-      }
+        use: ['csv-loader'],
+      },
     ],
   },
 };

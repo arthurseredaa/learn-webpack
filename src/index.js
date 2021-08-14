@@ -1,3 +1,4 @@
+import * as $ from 'jquery';
 import { Post } from '@models/Post';
 import { createAnalytics } from '@/analytics';
 import json from '@/assets/json';
@@ -5,9 +6,11 @@ import xml from '@/assets/data.xml';
 import csv from '@/assets/data.csv';
 import '@/styles/index.css';
 
-const post = new Post('webpack post title');
+const post = new Post('webpack post title').toString();
 
-console.log('Post: ', post.toString());
+$('pre').html(post);
+
+console.log('Post: ', post);
 console.log('JSON:', json);
 console.log('XML:', xml);
 console.log('CSV:', csv);

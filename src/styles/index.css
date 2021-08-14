@@ -19,3 +19,8 @@ body {
   background-image: url('../assets/webpack-logo.png');
   background-size: cover;
 }
+
+.post {
+  font-size: 12px;
+  text-align: left;
+}

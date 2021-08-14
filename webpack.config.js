@@ -6,6 +6,7 @@ module.exports = {
   context: path.resolve(__dirname, 'src'),
   entry: {
     main: './index.js',
+    analytics: './analytics.js'
   },
   output: {
     filename: '[name].[contenthash].js',
@@ -16,6 +17,11 @@ module.exports = {
     alias: {
       '@models': path.resolve(__dirname, 'src/models'),
       '@': path.resolve(__dirname, 'src')
+    }
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
     }
   },
   plugins: [

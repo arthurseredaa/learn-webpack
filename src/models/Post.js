@@ -5,5 +5,10 @@ export class Post {
     this.date = new Date().toLocaleTimeString();
   }
 
-  toString = () => JSON.stringify({title: this.title, date: this.date, img: this.img});
+  toString = () =>
+    JSON.stringify(
+      { title: this.title, date: this.date, img: this.img },
+      null,
+      2
+    );
 }

@@ -19,22 +19,27 @@ module.exports = {
   ],
   module: {
     rules: [
+      // styles
       {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
       },
+      // images
       {
         test: /\.(png|jpg|svg|gif)$/,
         // type: 'asset/resource'
       },
+      // fonts
       {
         test: /\.(ttf|otf)$/,
         // type: 'asset/resource'
       },
+      // xml
       {
         test: /\.xml$/,
         use: ['xml-loader']
       },
+      // csv
       {
         test: /\.csv$/,
         use: ['csv-loader']

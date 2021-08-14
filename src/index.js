@@ -8,7 +8,7 @@ import '@/styles/index.css';
 
 const post = new Post('webpack post title').toString();
 
-$('pre').html(post);
+$('pre').addClass('code').html(post);
 
 console.log('Post: ', post);
 console.log('JSON:', json);

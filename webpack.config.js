@@ -12,6 +12,10 @@ module.exports = {
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
   },
+  devServer: {
+    port: 9000,
+    open: true,
+  },
   resolve: {
     extensions: ['.js', '.json'],
     alias: {

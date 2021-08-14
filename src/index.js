@@ -1,5 +1,6 @@
 import * as $ from 'jquery';
 import { Post } from '@models/Post';
+import '@/babel';
 import { createAnalytics } from '@/analytics';
 import json from '@/assets/json';
 import xml from '@/assets/data.xml';

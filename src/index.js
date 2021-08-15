@@ -1,3 +1,4 @@
+import '../node_modules/@babel/polyfill';
 import React from 'react'
 // import * as $ from 'jquery';
 import { Post } from '@models/Post';

@@ -44,6 +44,15 @@ const babelUse = (presets) => {
   return config;
 };
 
+const jsLoader = () => {
+  const loaders = [babelUse()];
+  if (devMode) {
+    loaders.push({ loader: 'eslint-loader' });
+  }
+
+  return loaders;
+};
+
 const plugins = [
   new HtmlWebpackPlugin({
     template: './index.html',
@@ -99,7 +108,7 @@ module.exports = {
     },
   },
   // For easy finding files in devtools
-  devtool: devMode ? 'source-map' : '',
+  // devtool: devMode ? 'source-map' : '',
   module: {
     rules: [
       // STYLES
@@ -139,7 +148,7 @@ module.exports = {
       {
         test: /\.m?js$/,
         exclude: /node_modules/,
-        use: babelUse(),
+        use: jsLoader(),
       },
       // BABEL TYPESCRIPT
       {

@@ -7,6 +7,7 @@ const { HotModuleReplacementPlugin } = require('webpack');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 // TODO: fix hot module replacement, it doesn't work
 
 const devMode = process.env.NODE_ENV === 'development';
@@ -53,32 +54,40 @@ const jsLoader = () => {
   return loaders;
 };
 
-const plugins = [
-  new HtmlWebpackPlugin({
-    template: './index.html',
-    minify: {
-      collapseWhitespace: !devMode,
-    },
-  }),
-  // Clean dist folder after each build, delete only modified files
-  new CleanWebpackPlugin(),
-  // Copy favicon to dist folder
-  new CopyWebpackPlugin({
-    patterns: [
-      {
-        from: path.resolve(__dirname, 'src/favicon.ico'),
-        to: path.resolve(__dirname, 'dist'),
+const plugins = () => {
+  const base = [
+    new HtmlWebpackPlugin({
+      template: './index.html',
+      minify: {
+        collapseWhitespace: !devMode,
       },
-    ],
-  }),
-  // Minify css
-  new MiniCssExtractPlugin({
-    filename: fileName('css'),
-  }),
-  new webpack.HotModuleReplacementPlugin({
-    accept: true,
-  }),
-];
+    }),
+    // Clean dist folder after each build, delete only modified files
+    new CleanWebpackPlugin(),
+    // Copy favicon to dist folder
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, 'src/favicon.ico'),
+          to: path.resolve(__dirname, 'dist'),
+        },
+      ],
+    }),
+    // Minify css
+    new MiniCssExtractPlugin({
+      filename: fileName('css'),
+    }),
+    new webpack.HotModuleReplacementPlugin({
+      accept: true,
+    }),
+  ];
+
+  if (!devMode) {
+    base.push(new BundleAnalyzerPlugin());
+  }
+
+  return base;
+};
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
@@ -107,6 +116,7 @@ module.exports = {
       chunks: 'all',
     },
   },
+  plugins: plugins(),
   // For easy finding files in devtools
   // devtool: devMode ? 'source-map' : '',
   module: {
@@ -167,5 +177,4 @@ module.exports = {
   watchOptions: {
     aggregateTimeout: 100,
   },
-  plugins,
 };

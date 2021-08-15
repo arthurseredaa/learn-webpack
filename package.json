@@ -7,7 +7,8 @@
     "dev": "cross-env NODE_ENV=development webpack",
     "build": "cross-env NODE_ENV=production webpack",
     "watch": "cross-env NODE_ENV=development webpack --watch",
-    "start": "cross-env NODE_ENV=development webpack serve"
+    "start": "cross-env NODE_ENV=development webpack serve",
+    "stats": "webpack --json > stats.json && webpack-bundle-analyzer stats.json"
   },
   "keywords": [
     "js",
@@ -41,6 +42,7 @@
     "style-loader": "^3.2.1",
     "terser-webpack-plugin": "^5.1.4",
     "webpack": "^5.50.0",
+    "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.11.2",
     "xml-loader": "^1.2.1"

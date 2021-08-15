@@ -18,13 +18,27 @@ const cssLoader = (loader) => {
   const config = [
     {
       loader: MiniCssExtractPlugin.loader,
-      options: {},
     },
     'css-loader',
   ];
 
   if (loader) {
     config.push(loader);
+  }
+
+  return config;
+};
+
+const babelUse = (presets) => {
+  const config = {
+    loader: 'babel-loader',
+    options: {
+      presets: ['@babel/preset-env'],
+    },
+  };
+
+  if (presets && presets.length > 0) {
+    config.options.presets.push(...presets);
   }
 
   return config;
@@ -61,7 +75,6 @@ module.exports = {
   context: path.resolve(__dirname, 'src'),
   entry: {
     main: ['@babel/polyfill', './index.js'],
-    analytics: './analytics.js',
   },
   output: {
     filename: fileName('js'),
@@ -73,7 +86,7 @@ module.exports = {
     hot: devMode,
   },
   resolve: {
-    extensions: ['.js', '.json'],
+    extensions: ['.js', '.json', '.ts'],
     alias: {
       '@models': path.resolve(__dirname, 'src/models'),
       '@': path.resolve(__dirname, 'src'),
@@ -85,7 +98,8 @@ module.exports = {
       chunks: 'all',
     },
   },
-  plugins,
+  // For easy finding files in devtools
+  devtool: devMode ? 'source-map' : '',
   module: {
     rules: [
       // STYLES
@@ -125,16 +139,24 @@ module.exports = {
       {
         test: /\.m?js$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env'],
-          },
-        },
+        use: babelUse(),
+      },
+      // BABEL TYPESCRIPT
+      {
+        test: /\.m?ts$/,
+        exclude: /node_modules/,
+        use: babelUse(['@babel/preset-typescript']),
+      },
+      // BABEL REACT
+      {
+        test: /\.m?(js|jsx|tsx)$/,
+        exclude: /node_modules/,
+        use: babelUse(['@babel/preset-typescript', '@babel/preset-react']),
       },
     ],
   },
   watchOptions: {
     aggregateTimeout: 100,
   },
+  plugins,
 };
